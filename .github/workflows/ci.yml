@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  schema-validation:
+    name: Placeholder Schema Validation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Confirm required foundation files exist
+        run: |
+          test -f schema/genreport.schema.json
+          test -f docs/SPECIFICATION.md
+          test -f examples/sales-summary.grd.yaml
+
+      - name: Validate schema JSON syntax
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          schema_path = Path("schema/genreport.schema.json")
+          with schema_path.open("r", encoding="utf-8") as fh:
+              json.load(fh)
+
+          print("Schema JSON is valid.")
+          PY
+
+      - name: Placeholder note
+        run: echo "Runtime and full schema validation will be added in later phases."

@@ -1,0 +1,149 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://genreport.dev/schema/genreport.schema.json",
+  "title": "GenReport Definition",
+  "description": "Draft GenReport Definition v0.1 schema.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "report", "datasource", "columns"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "Definition version."
+    },
+    "report": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name"],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    },
+    "datasource": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "table"],
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "table": {
+          "type": "string"
+        }
+      }
+    },
+    "filters": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/filter"
+      }
+    },
+    "columns": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/column"
+      }
+    },
+    "sorting": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/sorting"
+      }
+    },
+    "grouping": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "summary": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/summary"
+      }
+    },
+    "exports": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["html", "csv", "excel", "pdf"]
+      },
+      "uniqueItems": true
+    }
+  },
+  "$defs": {
+    "filter": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "type", "required"],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "required": {
+          "type": "boolean"
+        }
+      }
+    },
+    "column": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "label", "type"],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        }
+      }
+    },
+    "sorting": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["field", "direction"],
+      "properties": {
+        "field": {
+          "type": "string"
+        },
+        "direction": {
+          "type": "string",
+          "enum": ["asc", "desc"]
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["field", "function"],
+      "properties": {
+        "field": {
+          "type": "string"
+        },
+        "function": {
+          "type": "string",
+          "enum": ["sum", "avg", "min", "max", "count"]
+        },
+        "label": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
+

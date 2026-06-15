@@ -1,0 +1,1 @@
+This fixture exists only to verify unsupported extension handling.

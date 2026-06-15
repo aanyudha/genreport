@@ -188,6 +188,12 @@ The GenReport runtime model is planned for:
 
 These are planned runtime targets only. Phase 1 does not implement runtime behavior yet.
 
+## TypeScript Runtime Status
+
+Phase 2 has started for the TypeScript runtime.
+
+Current capability is limited to GRD load, parse, and JSON Schema validation. Report execution, datasource access, and export rendering are not implemented yet.
+
 ## Planned Package Ecosystem
 
 Planned package directions for the ecosystem:
@@ -222,4 +228,4 @@ This repository is prepared as a public open-source foundation. It uses only gen
 
 ## Current Status
 
-GenReport is currently in its early foundation stage and should be considered experimental. The repository defines the structure, draft specification, and initial schema contract for the ecosystem, but it does not yet implement full runtimes or production-ready integrations.
+GenReport is currently in its early foundation stage and should be considered experimental. The repository defines the structure, draft specification, and initial schema contract for the ecosystem, and Phase 2 TypeScript runtime work has begun with GRD load, parse, and validation support only.

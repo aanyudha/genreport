@@ -1,0 +1,14 @@
+version: "0.1"
+report:
+  id: malformed
+  name: Malformed YAML
+columns:
+  - name: item_name
+    label: Item Name
+    type: string
+datasource:
+  type: table
+  table: sample
+exports:
+  - html
+  broken: true

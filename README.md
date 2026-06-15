@@ -13,6 +13,23 @@ GenReport is an AI-native, schema-first, runtime-based reporting engine designed
 
 The long-term goal is simple: an AI prompt can produce a GenReport definition, and that definition can be executed by a runtime, connected to an application through an integration layer, and delivered through one or more exporters.
 
+## What Is GRD
+
+GRD stands for GenReport Definition. It is the standard report definition format used by GenReport and typically stored as `.grd.yaml` or `.grd.json`.
+
+A GRD file defines:
+
+- report metadata
+- datasource information
+- filters
+- columns
+- sorting
+- grouping
+- summary rules
+- export targets
+
+See [docs/GRD_GUIDE.md](./docs/GRD_GUIDE.md) and [docs/SPECIFICATION.md](./docs/SPECIFICATION.md) for the Phase 1 standard details.
+
 ## What GenReport Is
 
 GenReport is a public open-source monorepo for a reporting standard and runtime ecosystem. It is intended to provide:
@@ -59,7 +76,7 @@ AI Prompt
   -> Preview / Export
 ```
 
-## Example `.grd.yaml`
+## Example GRD
 
 ```yaml
 version: "0.1"
@@ -117,6 +134,8 @@ exports:
   - pdf
 ```
 
+Additional examples are available in [`examples/`](./examples), including valid and intentionally invalid GRD files.
+
 ## Folder Structure
 
 ```text
@@ -156,7 +175,20 @@ genreport/
 └── .gitignore
 ```
 
-## Package Vision
+## Supported Runtimes (Planned)
+
+The GenReport runtime model is planned for:
+
+- TypeScript
+- PHP
+- Python
+- JVM
+- .NET
+- Go
+
+These are planned runtime targets only. Phase 1 does not implement runtime behavior yet.
+
+## Planned Package Ecosystem
 
 Planned package directions for the ecosystem:
 
@@ -167,6 +199,7 @@ Planned package directions for the ecosystem:
 - Maven and Gradle package coordinates in a future phase
 - NuGet package distribution in a future phase
 - Go module distribution in a future phase
+- Integration packages such as `@genreport/express`, `genreport/codeigniter`, `genreport-django`, and `io.genreport:genreport-springboot`
 
 ## Roadmap
 
@@ -190,4 +223,3 @@ This repository is prepared as a public open-source foundation. It uses only gen
 ## Current Status
 
 GenReport is currently in its early foundation stage and should be considered experimental. The repository defines the structure, draft specification, and initial schema contract for the ecosystem, but it does not yet implement full runtimes or production-ready integrations.
-

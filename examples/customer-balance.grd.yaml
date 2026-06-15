@@ -1,0 +1,50 @@
+version: "0.1"
+
+report:
+  id: customer-balance
+  name: Customer Balance Report
+  description: Shows current balances and aging status for customers.
+
+datasource:
+  type: table
+  table: customer_balances
+
+filters:
+  - name: branch_id
+    type: string
+    required: false
+  - name: include_overdue_only
+    type: boolean
+    required: false
+
+columns:
+  - name: customer_code
+    label: Customer Code
+    type: string
+  - name: customer_name
+    label: Customer Name
+    type: string
+  - name: balance_amount
+    label: Balance Amount
+    type: number
+  - name: overdue_days
+    label: Overdue Days
+    type: integer
+
+summary:
+  - field: balance_amount
+    function: sum
+    label: Total Outstanding Balance
+  - field: customer_code
+    function: count
+    label: Customer Count
+
+sorting:
+  - field: balance_amount
+    direction: desc
+
+exports:
+  - html
+  - excel
+  - pdf
+

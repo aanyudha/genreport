@@ -1,0 +1,19 @@
+version: "0.1"
+
+report:
+  id: invalid-invalid-export
+  name: Invalid Export Report
+
+datasource:
+  type: table
+  table: sample_data
+
+columns:
+  - name: item_name
+    label: Item Name
+    type: string
+
+exports:
+  - html
+  - xml
+

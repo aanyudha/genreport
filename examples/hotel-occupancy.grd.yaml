@@ -1,0 +1,56 @@
+version: "0.1"
+
+report:
+  id: hotel-occupancy
+  name: Hotel Occupancy Report
+  description: Tracks room occupancy by date and room type using generic sample data.
+
+datasource:
+  type: table
+  table: occupancy_records
+
+filters:
+  - name: start_date
+    type: date
+    required: true
+  - name: end_date
+    type: date
+    required: true
+  - name: room_type
+    type: string
+    required: false
+
+columns:
+  - name: occupancy_date
+    label: Occupancy Date
+    type: date
+  - name: room_type
+    label: Room Type
+    type: string
+  - name: occupied_rooms
+    label: Occupied Rooms
+    type: integer
+  - name: occupancy_rate
+    label: Occupancy Rate
+    type: number
+
+grouping:
+  - room_type
+
+summary:
+  - field: occupied_rooms
+    function: sum
+    label: Total Occupied Rooms
+  - field: occupancy_rate
+    function: avg
+    label: Average Occupancy Rate
+
+sorting:
+  - field: occupancy_date
+    direction: asc
+
+exports:
+  - html
+  - csv
+  - pdf
+

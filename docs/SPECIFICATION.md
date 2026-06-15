@@ -1,10 +1,12 @@
-# GenReport Definition Specification v0.1 Draft
+# GenReport Definition Standard v0.1
 
-This document defines the early draft structure for a GenReport Definition. The format may be expressed as JSON or YAML, but the logical structure is the same.
+This document defines the GenReport Definition standard for version `0.1`. A GenReport Definition may be written in JSON or YAML and is commonly referred to as a GRD file.
+
+The GRD is the portable source of truth for a report. It describes what a report is, how it should read data, how inputs should be validated, how results should be shaped, and which export targets are intended.
 
 ## Top-Level Structure
 
-The following top-level fields are defined in draft v0.1:
+The following top-level fields are defined in standard v0.1:
 
 - `version`
 - `report`
@@ -21,84 +23,193 @@ The following top-level fields are defined in draft v0.1:
 The schema version for the definition.
 
 - Type: string
-- Example: `"0.1"`
+- Required: yes
+- Current value for this standard: `"0.1"`
 
-## `report`
+## Report Metadata
 
-Describes report identity and metadata.
+The `report` object describes identity and human-readable metadata for the report definition.
 
-Suggested fields:
+Supported fields:
 
-- `id`: stable machine-friendly report identifier
-- `name`: human-readable report name
-- `description`: optional explanation of report purpose
+- `id`: stable machine-friendly identifier
+- `name`: human-readable name
+- `description`: optional explanation of the report purpose
 
-## `datasource`
+Rules:
 
-Describes where the runtime should read data from.
+- `report.id` should be stable across revisions of the same logical report
+- `report.name` should be readable by end users or maintainers
+- `report.description` should stay concise and public-safe
 
-Draft fields:
+Example:
 
-- `type`: datasource category such as `table`
-- `table`: source table or logical dataset name
+```yaml
+report:
+  id: member-expiry
+  name: Member Expiry Report
+  description: Lists memberships approaching their expiration date.
+```
 
-Future versions may support additional source models, joins, queries, or adapters.
+## Datasource Definition
 
-## `filters`
+The `datasource` object describes the logical source of data for a report.
 
-Defines input parameters that can constrain report execution.
+Supported fields in v0.1:
 
-Each filter may include:
+- `type`: datasource category
+- `table`: logical table or dataset name
 
-- `name`
-- `type`
-- `required`
+Supported datasource types in v0.1:
 
-Possible future additions include labels, defaults, validation constraints, and operators.
+- `table`
 
-## `columns`
+Rules:
 
-Defines the fields that should appear in the result set.
+- `datasource` is required
+- `datasource.type` must use a supported enum value
+- `datasource.table` must be a non-empty string
 
-Each column may include:
+Example:
 
-- `name`
-- `label`
-- `type`
+```yaml
+datasource:
+  type: table
+  table: memberships
+```
 
-Future versions may support computed fields, formatting rules, expressions, and visibility controls.
+## Filter Definition
 
-## `sorting`
+The `filters` array defines input parameters that may constrain report execution.
 
-Defines output ordering.
+Each filter object supports:
 
-Each sorting entry may include:
+- `name`: filter identifier
+- `type`: filter data type
+- `required`: whether the caller must provide a value
 
-- `field`
-- `direction`
+Supported filter types in v0.1:
 
-Allowed draft directions:
+- `string`
+- `number`
+- `integer`
+- `boolean`
+- `date`
+- `datetime`
+
+Rules:
+
+- Filter names should be descriptive and machine-friendly
+- Each filter entry should describe input shape, not query logic
+- Filters should remain portable across runtimes
+
+Example:
+
+```yaml
+filters:
+  - name: start_date
+    type: date
+    required: true
+  - name: branch_id
+    type: string
+    required: false
+```
+
+## Column Definition
+
+The `columns` array defines the fields that appear in the report result set.
+
+Each column object supports:
+
+- `name`: source or logical field name
+- `label`: human-readable display label
+- `type`: column data type
+
+Supported column types in v0.1:
+
+- `string`
+- `number`
+- `integer`
+- `boolean`
+- `date`
+- `datetime`
+
+Rules:
+
+- `columns` is required and must contain at least one entry
+- Column order is significant and should reflect intended output order
+- `label` should be presentation-friendly, while `name` remains machine-friendly
+
+Example:
+
+```yaml
+columns:
+  - name: member_name
+    label: Member Name
+    type: string
+  - name: expiry_date
+    label: Expiry Date
+    type: date
+```
+
+## Sorting Definition
+
+The `sorting` array defines output ordering.
+
+Each sorting object supports:
+
+- `field`: field name to sort by
+- `direction`: sort direction
+
+Supported directions in v0.1:
 
 - `asc`
 - `desc`
 
-## `grouping`
+Rules:
 
-Defines one or more fields used to group report results.
+- Sorting fields should refer to defined output or logical source fields
+- Ordering should remain deterministic where possible
 
-Draft v0.1 represents grouping as an array of field names.
+Example:
 
-## `summary`
+```yaml
+sorting:
+  - field: expiry_date
+    direction: asc
+```
 
-Defines aggregate calculations over the result set.
+## Grouping Definition
 
-Each summary entry may include:
+The `grouping` array defines one or more field names used to group report results.
 
-- `field`
-- `function`
-- `label`
+Representation in v0.1:
 
-Draft summary functions may include:
+- Array of strings
+
+Rules:
+
+- Grouping values should reference valid logical fields
+- Grouping should be used only when the report intends sectioned or aggregate output
+
+Example:
+
+```yaml
+grouping:
+  - branch_id
+```
+
+## Summary Definition
+
+The `summary` array defines aggregate calculations for the report result set.
+
+Each summary object supports:
+
+- `field`: field to aggregate
+- `function`: aggregation function
+- `label`: optional display label
+
+Supported summary functions in v0.1:
 
 - `sum`
 - `avg`
@@ -106,20 +217,104 @@ Draft summary functions may include:
 - `max`
 - `count`
 
-## `exports`
+Rules:
 
-Defines allowed or intended output targets for the report.
+- Summary functions should be deterministic across runtimes
+- Numeric functions such as `sum` and `avg` should be used with numeric fields
+- `label` should clearly describe the aggregate result
 
-Draft export values may include:
+Example:
+
+```yaml
+summary:
+  - field: total_amount
+    function: sum
+    label: Total Sales
+```
+
+## Export Definition
+
+The `exports` array defines allowed or intended output targets for the report.
+
+Supported export types in v0.1:
 
 - `html`
 - `csv`
 - `excel`
 - `pdf`
 
-## Design Notes
+Rules:
 
-- The definition should remain portable across languages.
-- The schema should be simple enough for AI generation and deterministic validation.
-- Runtime behavior should be derived from the definition rather than framework-specific code.
+- Export values must come from the supported enum set
+- Export targets describe delivery intent, not business logic
+
+Example:
+
+```yaml
+exports:
+  - html
+  - csv
+  - pdf
+```
+
+## Validation Rules
+
+The following validation rules apply to GRD v0.1:
+
+- The root object must include `version`, `report`, `datasource`, and `columns`
+- Additional unknown top-level fields are not allowed by the current schema
+- `report.id` and `report.name` are required
+- `datasource.type` and `datasource.table` are required
+- `columns` must contain at least one valid column entry
+- `filters`, `sorting`, `grouping`, `summary`, and `exports` are optional
+- `sorting.direction` must be `asc` or `desc`
+- `summary.function` must be one of the supported aggregate functions
+- `exports` values must be supported export types
+- `exports` values must be unique
+
+Some semantic checks are intentionally left to future runtimes or validators, such as verifying that a `sorting.field` or `summary.field` references a known field.
+
+## Reserved Keywords
+
+The following top-level keywords are reserved by the standard:
+
+- `version`
+- `report`
+- `datasource`
+- `filters`
+- `columns`
+- `sorting`
+- `grouping`
+- `summary`
+- `exports`
+
+The following nested field names are also reserved within their respective objects:
+
+- `id`
+- `name`
+- `description`
+- `type`
+- `table`
+- `label`
+- `required`
+- `field`
+- `direction`
+- `function`
+
+Future versions may reserve additional keywords. Tooling should avoid reinterpreting reserved keywords for unrelated meanings.
+
+## Future Compatibility Notes
+
+- v0.1 is intentionally compact and portable
+- Future versions may add joins, computed fields, filter operators, formatting metadata, permissions, localization, and richer datasource definitions
+- Future versions should prefer additive evolution where practical
+- Breaking changes should require a version change and an updated schema contract
+- Runtimes should read the declared `version` before attempting execution
+
+## Design Principles
+
+- The definition remains the source of truth
+- The standard stays runtime-first rather than code-generator-first
+- The structure stays framework-agnostic
+- The contract should remain simple enough for deterministic AI generation and validation
 

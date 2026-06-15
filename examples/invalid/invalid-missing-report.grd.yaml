@@ -1,0 +1,11 @@
+version: "0.1"
+
+datasource:
+  type: table
+  table: memberships
+
+columns:
+  - name: member_name
+    label: Member Name
+    type: string
+

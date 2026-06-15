@@ -1,0 +1,55 @@
+version: "0.1"
+
+report:
+  id: inventory-summary
+  name: Inventory Summary Report
+  description: Summarizes inventory quantities by category and warehouse.
+
+datasource:
+  type: table
+  table: inventory_items
+
+filters:
+  - name: warehouse_id
+    type: string
+    required: false
+  - name: as_of_date
+    type: date
+    required: true
+
+columns:
+  - name: category_name
+    label: Category
+    type: string
+  - name: warehouse_name
+    label: Warehouse
+    type: string
+  - name: item_count
+    label: Item Count
+    type: integer
+  - name: total_quantity
+    label: Total Quantity
+    type: number
+
+grouping:
+  - category_name
+  - warehouse_name
+
+summary:
+  - field: item_count
+    function: sum
+    label: Total Items
+  - field: total_quantity
+    function: sum
+    label: Total Quantity
+
+sorting:
+  - field: category_name
+    direction: asc
+  - field: warehouse_name
+    direction: asc
+
+exports:
+  - html
+  - excel
+

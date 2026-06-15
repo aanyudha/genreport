@@ -1,0 +1,45 @@
+version: "0.1"
+
+report:
+  id: member-expiry
+  name: Member Expiry Report
+  description: Shows memberships that are close to expiration.
+
+datasource:
+  type: table
+  table: memberships
+
+filters:
+  - name: expiry_start
+    type: date
+    required: true
+  - name: expiry_end
+    type: date
+    required: true
+  - name: membership_type
+    type: string
+    required: false
+
+columns:
+  - name: member_id
+    label: Member ID
+    type: string
+  - name: member_name
+    label: Member Name
+    type: string
+  - name: membership_type
+    label: Membership Type
+    type: string
+  - name: expiry_date
+    label: Expiry Date
+    type: date
+
+sorting:
+  - field: expiry_date
+    direction: asc
+
+exports:
+  - html
+  - csv
+  - pdf
+

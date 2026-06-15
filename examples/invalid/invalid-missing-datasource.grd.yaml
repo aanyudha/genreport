@@ -1,0 +1,11 @@
+version: "0.1"
+
+report:
+  id: invalid-missing-datasource
+  name: Invalid Missing Datasource
+
+columns:
+  - name: member_name
+    label: Member Name
+    type: string
+
